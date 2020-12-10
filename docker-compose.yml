@@ -1,0 +1,84 @@
+version: "3"
+services:
+  billing-db:
+    image: mongo:3.6.19-xenial
+    ports:
+      - "27017:27017"
+    networks:
+      - mern-app  
+    volumes:
+      - "/var/lib/billing-db:/data/db"
+  location-management-db:
+    image: mongo:3.6.19-xenial
+    ports:
+      - "27018:27017"
+    networks:
+      - mern-app  
+    volumes:
+      - "/var/lib/location-management-db:/data/db"   
+  notifications-db:
+    image: mongo:3.6.19-xenial
+    ports:
+      - "27019:27017"
+    networks:
+      - mern-app  
+    volumes:
+      - "/var/lib/notifications-db:/data/db"
+  user-management-db:
+    image: mongo:3.6.19-xenial
+    ports:
+      - "27020:27017"
+    networks:
+      - mern-app  
+    volumes:
+      - "/var/lib/user-management-db:/data/db"                   
+  yahuda-client:
+    build: ./services/client
+    stdin_open: true
+    image: yahuda-client
+    ports: 
+      - "3000:3000"
+    networks:
+      - mern-app  
+  billing:
+    build: ./services/server/billing
+    image: billing
+    ports:
+      - "5001:5000"
+    networks:
+      - mern-app  
+    depends_on:
+      - billing-db
+  location-management:
+    build: ./services/server/location-management
+    image: location-management
+    ports:
+      - "3002:6000"
+    networks:
+      - mern-app  
+    depends_on:
+      - location-management-db  
+  notifications:
+    build: ./services/server/notifications
+    image: notifications
+    ports:
+      - "3003:7000"
+    networks:
+      - mern-app  
+    depends_on:
+      - notifications-db
+  user-management:
+    build: ./services/server/user-management
+    image: user-management
+    ports:
+      - "3004:8000"
+    networks:
+      - mern-app  
+    depends_on:
+      - user-management-db              
+networks:
+  mern-app:
+    driver: bridge      
+volumes:
+  mongo-data:
+    driver: local
