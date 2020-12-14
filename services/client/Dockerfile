@@ -1,14 +1,18 @@
-FROM node:14-slim
+FROM node:14.15.1-alpine
 
-WORKDIR /usr/src/app
+# set working directory
+WORKDIR /app
 
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
+# install app dependencies
 COPY ./package.json ./
-COPY ./yarn.lock ./
-
+# COPY package-lock.json ./
 RUN yarn install
 
+# add app
 COPY . .
 
-EXPOSE 3000
-
-CMD [ "yarn", "start" ]
+# start app
+CMD ["yarn", "start"] 

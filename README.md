@@ -27,3 +27,4 @@
 2. Run this command in root of project: docker-compose up
 
 => To Stop and remove the containers: docker-compose down
+- "/var/lib/billing-db:/data/db"

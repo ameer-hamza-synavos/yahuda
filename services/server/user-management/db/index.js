@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 mongoose
-    .connect('mongodb://user-management-db:27020/cinema', { useNewUrlParser: true })
+    .connect('mongodb://user-management-db:27017/cinema', { useNewUrlParser: true })
     .catch(e => {
         console.error('Connection error', e.message)
     })

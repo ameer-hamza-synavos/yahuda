@@ -7,7 +7,7 @@ services:
     networks:
       - mern-app  
     volumes:
-      - "/var/lib/billing-db:/data/db"
+      - mongo-data:/data/billing-db
   location-management-db:
     image: mongo:3.6.19-xenial
     ports:
@@ -15,7 +15,7 @@ services:
     networks:
       - mern-app  
     volumes:
-      - "/var/lib/location-management-db:/data/db"   
+      - mongo-data:/data/location-management-db   
   notifications-db:
     image: mongo:3.6.19-xenial
     ports:
@@ -23,7 +23,7 @@ services:
     networks:
       - mern-app  
     volumes:
-      - "/var/lib/notifications-db:/data/db"
+      - mongo-data:/data/notifications-db 
   user-management-db:
     image: mongo:3.6.19-xenial
     ports:
@@ -31,7 +31,7 @@ services:
     networks:
       - mern-app  
     volumes:
-      - "/var/lib/user-management-db:/data/db"                   
+      - mongo-data:/data/user-management-db                    
   yahuda-client:
     build: ./services/client
     stdin_open: true
@@ -39,16 +39,24 @@ services:
     ports: 
       - "3000:3000"
     networks:
-      - mern-app  
+      - mern-app
+    volumes:
+      - ./services/client:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true     
   billing:
     build: ./services/server/billing
     image: billing
     ports:
-      - "5001:5000"
+      - "3001:5000"
     networks:
       - mern-app  
     depends_on:
       - billing-db
+    volumes:
+      - ./services/server/billing:/app
+      - /app/node_modules   
   location-management:
     build: ./services/server/location-management
     image: location-management
@@ -57,7 +65,10 @@ services:
     networks:
       - mern-app  
     depends_on:
-      - location-management-db  
+      - location-management-db
+    volumes:
+      - ./services/server/location-management:/app
+      - /app/node_modules      
   notifications:
     build: ./services/server/notifications
     image: notifications
@@ -67,6 +78,9 @@ services:
       - mern-app  
     depends_on:
       - notifications-db
+    volumes:
+      - ./services/server/notifications:/app
+      - /app/node_modules  
   user-management:
     build: ./services/server/user-management
     image: user-management
@@ -75,7 +89,10 @@ services:
     networks:
       - mern-app  
     depends_on:
-      - user-management-db              
+      - user-management-db
+    volumes:
+      - ./services/server/user-management:/app
+      - /app/node_modules                
 networks:
   mern-app:
     driver: bridge      
